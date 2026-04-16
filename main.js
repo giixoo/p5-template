@@ -29,11 +29,21 @@ function generate() {
   redraw();
 }
 
+function stampedFilename(ext) {
+  let d = new Date();
+  let yy = String(d.getFullYear()).slice(-2);
+  let MM = String(d.getMonth() + 1).padStart(2, '0');
+  let dd = String(d.getDate()).padStart(2, '0');
+  let hh = String(d.getHours()).padStart(2, '0');
+  let mm = String(d.getMinutes()).padStart(2, '0');
+  return `sketch-${yy}${MM}${dd}-${hh}${mm}.${ext}`;
+}
+
 function exportSVG() {
   let svgEl = document.querySelector('#canvas-container svg');
   if (!svgEl) return;
   let blob = new Blob([new XMLSerializer().serializeToString(svgEl)], { type: 'image/svg+xml' });
-  downloadBlob(blob, 'sketch.svg');
+  downloadBlob(blob, stampedFilename('svg'));
 }
 
 function exportPNG() {
@@ -45,7 +55,7 @@ function exportPNG() {
     offscreen.width = canvasWidth;
     offscreen.height = canvasHeight;
     offscreen.getContext('2d').drawImage(img, 0, 0);
-    offscreen.toBlob(blob => downloadBlob(blob, 'sketch.png'));
+    offscreen.toBlob(blob => downloadBlob(blob, stampedFilename('png')));
   };
   img.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(new XMLSerializer().serializeToString(svgEl));
 }
